@@ -2,8 +2,8 @@ defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
 
   # @spec mount(any, any, any) :: {:ok, any}
-  def mount(_params, _session, socket) do
-    if connected?(socket), do: Process.send_after(self(), :update, 1000)
+  def mount(_params, session, socket) do
+    if connected?(socket), do: Process.send_after(self(), :update, 0000)
 
     {
       :ok,
@@ -13,11 +13,12 @@ defmodule PentoWeb.WrongLive do
         message: "Guess a number.",
         time: NaiveDateTime.local_now(),
         correct: :rand.uniform(10),
-        correct_guess: false
+        correct_guess: false,
+        user: Pento.Accounts.get_user_by_session_token(session["user_token"]),
+        session_id: session["live_socket_id"]
       )
     }
   end
-
 
   def handle_event("guess", %{"number" => guess} = data, %{assigns: %{correct: correct}} = socket) do
     IO.inspect(data)
@@ -60,7 +61,6 @@ defmodule PentoWeb.WrongLive do
       |> assign(correct: :rand.uniform(10))
       |> assign(message: "Restart game")
       |> assign(correct_guess: false)
-
     }
   end
 
@@ -88,6 +88,10 @@ defmodule PentoWeb.WrongLive do
     <%=  if @correct_guess do %>
     <button type="button" phx-click="restart" class="btn-primary btn">Reset</button>
     <% end %>
+    <pre>
+    <%= @user.email %>
+    <%= @session_id %>
+    </pre>
     """
   end
 
