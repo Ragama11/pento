@@ -89,7 +89,7 @@ defmodule PentoWeb.WrongLive do
     <button type="button" phx-click="restart" class="btn-primary btn">Reset</button>
     <% end %>
     <pre>
-    <%= @user.email %>
+    <%= @user.username %>
     <%= @session_id %>
     </pre>
     """
